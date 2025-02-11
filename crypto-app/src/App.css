@@ -10,8 +10,10 @@
 }
 
 .crypto-image {
-  width: 150px;
-  height: auto;
+  width: 100px; /* ✅ Matches container */
+  height: 100px;
+  object-fit: contain; /* ✅ Prevents image distortion */
+  margin-bottom: 10px;
   border-radius: 10px;
   transition: transform 0.2s;
 }
@@ -35,11 +37,64 @@
   color: #61dafb;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.crypto-container {
+  text-align: center;
+  padding: 20px;
+}
+
+.input-container {
+  margin-bottom: 20px;
+}
+
+input {
+  padding: 10px;
+  font-size: 16px;
+  width: 200px;
+  margin-right: 10px;
+}
+
+button {
+  padding: 10px;
+  font-size: 16px;
+  cursor: pointer;
+  background-color: #ff9800;
+  color: white;
+  border: none;
+  border-radius: 5px;
+}
+
+.error {
+  color: red;
+  font-size: 18px;
+  font-weight: bold;
+  margin-top: 15px;
+}
+
+.crypto-gallery {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 20px;
+  padding: 20px;
+}
+
+.crypto-item {
+  text-align: center;
+  background: #222;
+  padding: 15px;
+  border-radius: 10px;
+  color: white;
+  width: 180px;
+  height: 220px; /* ✅ Increased height */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.crypto-price {
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: #ff9800;
 }

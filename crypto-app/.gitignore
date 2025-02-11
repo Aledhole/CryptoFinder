@@ -1,3 +1,4 @@
+# Ignore node_modules
 node_modules/
 
 # Ignore environment files
@@ -5,3 +6,6 @@ node_modules/
 backend/.env
 crypto-app/.env
 
+# Ignore build files
+/dist
+/build

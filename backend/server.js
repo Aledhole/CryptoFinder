@@ -14,6 +14,5 @@ app.use(express.json());
 
 
 app.listen(PORT, () => {
-    console.log(`Proxy server running on http://localhost:${PORT}`);
-    console.log(`Using API Key: ${process.env.CMC_SECRET_KEY ? "Loaded" : "NOT LOADED"}`);
+    console.log(`Proxy server running on http://localhost:${PORT}`);    
 });

@@ -5,10 +5,11 @@ import "./styling/Navbar.css"; // Create this CSS file for styling
 const Navbar = () => {
   return (
     <nav className="navbar">
-      <h2 className="logo">CryptoFinder</h2>
+      <h1 className="logo">CryptoFinder</h1>
       <ul className="nav-links">
         <li><Link to="/">Home</Link></li>        
-        <li><Link to="/CryptoConverter">Converter</Link></li>          
+        <li><Link to="/CryptoConverter">Converter</Link></li>
+        <li><Link to="/TaxCalculator">TaxCalculator</Link></li>            
       </ul>
     </nav>
   );

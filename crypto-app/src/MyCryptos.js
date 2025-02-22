@@ -1,5 +1,5 @@
 import React, { useState} from "react";
-import "./styling/App.css";
+import "./App.css";
 import FearGreedIndex from "./FearGreedIndex";
 
 const MyCryptos = () => {
@@ -8,7 +8,7 @@ const MyCryptos = () => {
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
 
-  // ✅ Validate Cryptocurrency
+  //  Validate Cryptocurrency
   const validateCrypto = async (symbol) => {
     try {
       const response = await fetch(`http://localhost:5000/crypto-info?symbol=${symbol}`);
@@ -22,7 +22,7 @@ const MyCryptos = () => {
     }
   };
 
-  // ✅ Fetch Crypto Price via REST API
+  // Fetch Crypto Price via REST API
   const fetchCryptoPriceREST = async (symbol) => {
     try {
       const response = await fetch(`http://localhost:5000/check-crypto?symbol=${symbol}`);
@@ -40,7 +40,7 @@ const MyCryptos = () => {
     }
   };
 
-  // ✅ Add Crypto Symbol
+  // Add Crypto Symbol
   const handleAddCrypto = async () => {
     if (!newSymbol) return;
     const symbol = newSymbol.toUpperCase();
@@ -70,25 +70,26 @@ const MyCryptos = () => {
   return (
     <div className="crypto-container">
       <h2>Live Crypto Prices</h2>
-
+  
       {/* ✅ Fear & Greed Index Section */}
       <FearGreedIndex />
-
-      {/* ✅ Crypto Input */}
-      <div className="input-container">
+  
+      {/* ✅ Improved Add Crypto Section */}
+      <div className="add-crypto-container">
+        <h2>Add a New Crypto</h2>
         <input
           type="text"
           value={newSymbol}
           onChange={(e) => setNewSymbol(e.target.value)}
           placeholder="Enter Symbol (e.g., BTC)"
         />
-        <button onClick={handleAddCrypto} disabled={loading}>
+        <button className="button" onClick={handleAddCrypto} disabled={loading}>
           {loading ? "Adding..." : "Add Crypto"}
         </button>
       </div>
-
+  
       {error && <p className="error">{error}</p>}
-
+  
       {/* ✅ Crypto Display */}
       <div className="crypto-gallery">
         {cryptos.map((crypto, index) => (

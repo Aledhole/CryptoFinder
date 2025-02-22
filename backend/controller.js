@@ -7,31 +7,52 @@ const CACHE_TIME = 60 * 60 * 1000; // 1 hour cache
 const cache = {};
 
 
-// Generic API Fetcher with Caching
 const fetchFromAPI = async (cacheKey, url, headers, params, cacheDuration = CACHE_TIME) => {
   if (cache[cacheKey]) {
-    const timeElapsed = Date.now() - cache[cacheKey].timestamp;
-    console.log(`⏳ Checking cache for ${cacheKey}:`, timeElapsed / 1000, "seconds ago");
+      const timeElapsed = Date.now() - cache[cacheKey].timestamp;      
 
-    if (timeElapsed < cacheDuration) {
-      console.log(`✅ Cache HIT for ${cacheKey}`);
-      return cache[cacheKey].data;
-    } else {
-      console.log(`⚠️ Cache EXPIRED for ${cacheKey}, fetching new data...`);
-    }
+      if (timeElapsed < cacheDuration) {          
+          return cache[cacheKey].data;
+      } else {
+          console.log(`Cache EXPIRED for ${cacheKey}, fetching new data...`);
+      }
   } else {
-    console.log(`🚀 No cache found for ${cacheKey}, fetching new data...`);
+      console.log(`No cache found for ${cacheKey}, fetching new data...`);
   }
 
   try {
-    console.log(`🔍 Fetching ${cacheKey} from API...`);
-    const response = await axios.get(url, { headers, params });
-    cache[cacheKey] = { data: response.data, timestamp: Date.now() }; // Store in cache
-    return response.data;
+      console.log(` Fetching ${cacheKey} from API...`);
+      const response = await axios.get(url, { headers, params });      
+
+      if (!response.data || !response.data.data) {
+          throw new Error(` Invalid response for ${cacheKey}`);
+      }
+
+      cache[cacheKey] = { data: response.data, timestamp: Date.now() }; // Store in cache
+      return response.data;
   } catch (error) {
-    console.error(`❌ Error fetching ${cacheKey}:`, error.response?.data || error.message);
+      console.error(` Error fetching ${cacheKey}:`, error.response?.data || error.message);
+      return null;
+  }
+};
+
+const fetchFullCryptoData = async (symbol) => {
+  const url = `https://pro-api.coinmarketcap.com/v1/cryptocurrency/quotes/latest`;
+  const headers = { "X-CMC_PRO_API_KEY": CMC_API_KEY };
+  const params = { symbol: symbol.toUpperCase() };
+
+  return fetchFromAPI(`price-${symbol}`, url, headers, params);
+};
+
+const fetchCryptoPrice = async (symbol) => {
+  const fullData = await fetchFullCryptoData(symbol);
+
+  if (!fullData || !fullData.data || !fullData.data[symbol.toUpperCase()]) {
+    console.error(`❌ API response invalid for ${symbol}`, JSON.stringify(fullData, null, 2));
     return null;
   }
+
+  return fullData;  
 };
 
 
@@ -42,22 +63,7 @@ const fetchCryptoInfo = async (symbol) => {
   return fetchFromAPI(`info-${symbol}`, url, headers);
 };
 
-const fetchFullCryptoData = async (symbol) => {
-  const url = `https://pro-api.coinmarketcap.com/v1/cryptocurrency/quotes/latest?symbol=${symbol.toUpperCase()}`;
-  const headers = { "X-CMC_PRO_API_KEY": CMC_API_KEY };
-  return fetchFromAPI(`price-${symbol}`, url, headers);
-};
 
-const fetchCryptoPrice = async (symbol) => {
-  const fullData = await fetchFullCryptoData(symbol);
-
-  if (!fullData || !fullData.data || !fullData.data[symbol.toUpperCase()]) {
-    console.error(`❌ Price data not found for ${symbol}`);
-    return null;
-  }
-
-  return fullData.data[symbol.toUpperCase()].quote.USD.price;
-};
 // Validate if a cryptocurrency exists (Cached for 6 hours)
 const validateCryptoSymbol = async (symbol) => {
   if (cache["cryptoSymbols"] && Date.now() - cache["cryptoSymbols"].timestamp < 6 * 60 * 60 * 1000) {
@@ -88,7 +94,7 @@ const fetchFearGreedIndex = async () => {
       timestamp: response.data.data[0].timestamp,
     };
   } catch (error) {
-    console.error("❌ Error fetching Fear & Greed Index:", error.message);
+    console.error("Error fetching Fear & Greed Index:", error.message);
     return null;
   }
 };
@@ -99,7 +105,7 @@ const fetchTopCryptos = async () => {
   }
 
   try {
-    console.log("🔍 Fetching top 50 cryptocurrencies...");
+    console.log("Fetching top 50 cryptocurrencies...");
     const response = await axios.get("https://pro-api.coinmarketcap.com/v1/cryptocurrency/listings/latest", {
       params: { limit: 50 },
       headers: { "X-CMC_PRO_API_KEY": CMC_API_KEY },
@@ -113,7 +119,7 @@ const fetchTopCryptos = async () => {
     cache["topCryptos"] = { data: cryptos, timestamp: Date.now() };
     return cryptos;
   } catch (error) {
-    console.error("❌ Error fetching top cryptos:", error.response?.data || error.message);
+    console.error("Error fetching top cryptos:", error.response?.data || error.message);
     return [];
   }
 };

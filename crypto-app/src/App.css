@@ -10,9 +10,9 @@
 }
 
 .crypto-image {
-  width: 100px; /* ✅ Matches container */
+  width: 100px; 
   height: 100px;
-  object-fit: contain; /* ✅ Prevents image distortion */
+  object-fit: contain; 
   margin-bottom: 10px;
   border-radius: 10px;
   transition: transform 0.2s;
@@ -41,26 +41,43 @@
   text-align: center;
   padding: 20px;
 }
+/* 📌 Center Add Crypto Section */
+.add-crypto-container {
+  display: flex;
+  flex-direction: column;  
+  align-items: center;  
+  justify-content: center; 
+  text-align: center;
+  padding: 20px;
+  background-color: #adadac;
+  color: black;
+  border-radius: 10px;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3);
+  max-width: 400px;
+  margin: 20px auto;}
 
-.input-container {
-  margin-bottom: 20px;
-}
-
-input {
-  padding: 10px;
-  font-size: 16px;
-  width: 200px;
-  margin-right: 10px;
-}
-
-button {
-  padding: 10px;
-  font-size: 16px;
-  cursor: pointer;
-  background-color: #ff9800;
-  color: white;
-  border: none;
+.add-crypto-container input {
+  width: 100%; 
+  max-width: 300px; 
+  padding: 12px;
+  margin-bottom: 15px;
   border-radius: 5px;
+  border: 1px solid #d1d0cf;
+  background-color: white;
+  color: black;
+  font-size: 16px;
+  text-align: center;
+}
+
+.add-crypto-container input::placeholder {
+  color: black;
+}
+
+.add-crypto-container .button {
+  width: 100%; 
+  max-width: 300px; 
+  text-align: center;
+  background-color: #002e7d;
 }
 
 .error {
@@ -81,12 +98,12 @@ button {
 
 .crypto-item {
   text-align: center;
-  background: #222;
+  background: #adadac;
   padding: 15px;
   border-radius: 10px;
-  color: white;
+  color: black;
   width: 180px;
-  height: 220px; /* ✅ Increased height */
+  height: 220px; 
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -96,5 +113,7 @@ button {
 .crypto-price {
   font-size: 1.2rem;
   font-weight: bold;
-  color: #ff9800;
+  color: #5d3409;
 }
+
+

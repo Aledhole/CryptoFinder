@@ -1,20 +1,26 @@
 .navbar {
-    background-color: #282c34;
-    padding: 15px 20px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-  }
-  
+  width: 100%;  
+  top: 0;
+  left: 0;
+  height: 60px;
+  background-color: #002e7d;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;  
+  z-index: 1000;
+  }  
   .navbar h1 {
     color: white;
     font-size: 1.5rem;
+    padding-left: 20px;
   }
   
   .nav-links {
     list-style: none;
     display: flex;
     gap: 20px;
+    padding-right: 80px;
   }
   
   .nav-links li {

@@ -1,7 +1,67 @@
 const express = require("express");
+const axios = require("axios");
+const multer = require("multer");
+const csvParser = require("csv-parser");
+const fs = require("fs");
 const {fetchTopCryptos, fetchFearGreedIndex, fetchCryptoInfo, fetchCryptoPrice,fetchFullCryptoData, validateCryptoSymbol } = require("./controller");
 
 const router = express.Router();
+
+const upload = multer({ dest: "uploads/" });
+router.post("/upload-csv", upload.single("file"), async (req, res) => {
+  if (!req.file) return res.status(400).json({ error: "No file uploaded" });
+
+  const transactions = [];
+  fs.createReadStream(req.file.path)
+    .pipe(csvParser())
+    .on("data", (row) => {
+      if (row.symbol && row.buyDate && row.buyPrice && row.sellDate && row.sellPrice && row.amount) {
+        transactions.push({
+          symbol: row.symbol.toUpperCase(),
+          buyDate: row.buyDate,
+          buyPrice: parseFloat(row.buyPrice),
+          sellDate: row.sellDate,
+          sellPrice: parseFloat(row.sellPrice),
+          amount: parseFloat(row.amount),
+        });
+      }
+    })
+    .on("end", () => {
+      fs.unlinkSync(req.file.path); // Delete file after processing
+      res.json({ transactions });
+    })
+    .on("error", (error) => {
+      console.error("❌ Error processing CSV:", error.message);
+      res.status(500).json({ error: "Failed to process CSV file" });
+    });
+});
+
+router.post("/calculate-tax", async (req, res) => {
+  console.log("📡 Request Body Received:", req.body); // Debugging
+
+  // ✅ Ensure transactions exist and are an array
+  if (!req.body || !req.body.transactions || !Array.isArray(req.body.transactions) || req.body.transactions.length === 0) {
+    return res.status(400).json({ error: "No transactions found. Please upload a valid CSV file." });
+  }
+
+  const { transactions } = req.body;
+
+  let totalGains = 0;
+  let totalLosses = 0;
+
+  transactions.forEach(({ buyPrice, sellPrice, amount }) => {
+    const profit = (sellPrice - buyPrice) * amount;
+    if (profit > 0) totalGains += profit;
+    else totalLosses += Math.abs(profit);
+  });
+
+  res.json({
+    totalGains: totalGains.toFixed(2),
+    totalLosses: totalLosses.toFixed(2),
+    netTaxable: (totalGains - totalLosses).toFixed(2),
+  });
+});
+
 
 router.get("/top-cryptos", async (req, res) => {
   try {
@@ -10,32 +70,43 @@ router.get("/top-cryptos", async (req, res) => {
     if (!topCryptos || topCryptos.length === 0) {
       return res.status(500).json({ error: "Failed to fetch top cryptocurrencies." });
     }
-
-    res.json({ cryptos: topCryptos }); // Wrap response in an object
+    res.json({ cryptos: topCryptos }); 
   } catch (error) {
     console.error("Error fetching top cryptos:", error);
     return res.status(500).json({ error: "Internal server error" });
   }
 });
 
+
 router.get("/convert", async (req, res) => {
   const { from, to, amount } = req.query;
+  
+  //console.log("Query Parameters:", req.query);
 
   if (!from || !to || !amount) {
     return res.status(400).json({ error: "Missing query parameters" });
   }
 
-  try {
+  try {    
     const fromPriceData = await fetchCryptoPrice(from);
     const toPriceData = await fetchCryptoPrice(to);
+  
+    const fromSymbol = from.toUpperCase();
+    const toSymbol = to.toUpperCase();
 
-    if (!fromPriceData || !toPriceData) {
-      return res.status(500).json({ error: "Failed to fetch price data" });
+    if (!fromPriceData?.data?.[fromSymbol] || !toPriceData?.data?.[toSymbol]) {
+      console.error(`❌ Failed to fetch price data for ${fromSymbol} or ${toSymbol}`);
+      return res.status(500).json({ error: `Price data not found for ${fromSymbol} or ${toSymbol}` });
     }
 
-    const fromPrice = fromPriceData[from.toUpperCase()].quote.USD.price;
-    const toPrice = toPriceData[to.toUpperCase()].quote.USD.price;
+    // Extract prices
+    const fromPrice = fromPriceData.data[fromSymbol]?.quote?.USD?.price;
+    const toPrice = toPriceData.data[toSymbol]?.quote?.USD?.price;
 
+    if (fromPrice === undefined || toPrice === undefined) {
+      console.error(`❌ Price data missing for ${fromSymbol} or ${toSymbol}`);
+      return res.status(500).json({ error: `Price data not found for ${fromSymbol} or ${toSymbol}` });
+    }    
     const convertedAmount = (amount * fromPrice) / toPrice;
 
     res.json({ converted: convertedAmount });
@@ -44,6 +115,7 @@ router.get("/convert", async (req, res) => {
     res.status(500).json({ error: "Conversion failed" });
   }
 });
+
 
   
 

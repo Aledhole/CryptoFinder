@@ -1,0 +1,106 @@
+.tax-page {
+  display: flex;
+  flex-direction: column;
+  align-items: center; 
+  justify-content: top; 
+  width: 100%;
+  min-height: 100vh; 
+  padding-top: 50px; 
+}
+
+.tax-calculator {
+  display: flex;
+  flex-direction: column;
+  align-items: center; 
+  width: 90%;  
+  max-width: 700px; 
+  padding: 10px;
+  background: #2c2c2c; 
+  color: white;
+  border-radius: 10px;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3);
+  text-align: center; 
+}
+
+
+.tax-calculator input {
+  width: 100%;
+  max-width: 350px;
+  padding: 8px;
+  margin: 5px 0;
+  border-radius: 5px;
+  border: 1px solid #666;
+  background-color: #333;
+  color: white;
+  font-size: 12px;
+  text-align: center;
+}
+
+.tax-calculator button {
+  margin: 10px;
+  padding: 12px 20px;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  background: linear-gradient(135deg, #002e7d, #0056b3);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  transition: all 0.3s ease-in-out;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.tax-calculator button:hover {
+  background: linear-gradient(135deg, #0044aa, #0078ff);
+  transform: scale(1.05);
+}
+
+.tax-calculator button:active {
+  transform: scale(0.95);
+}
+
+.transaction-table {
+  width: 100%;
+  max-width: 650px;
+  border-collapse: collapse;
+  margin-top: 20px;
+  background: #1e1e1e;
+  color: white;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.transaction-table th, .transaction-table td {
+  padding: 10px;
+  border: 1px solid #444;
+}
+
+.transaction-table th {
+  background: #0056b3;
+}
+
+.transaction-table td {
+  text-align: center;
+}
+
+
+.tax-results {
+  background: #f4f4f4;
+  padding: 15px;
+  margin-top: 15px;
+  border-radius: 5px;
+  width: 100%;
+  max-width: 500px;
+  text-align: center;
+  color: black;
+}
+
+.tax-results {
+  background: #f4f4f4;
+  padding: 15px;
+  margin-top: 15px;
+  border-radius: 5px;
+  width: 100%;
+  max-width: 500px;
+  text-align: center;
+}

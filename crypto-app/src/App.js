@@ -1,9 +1,10 @@
 import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import "./styling/App.css";
+import "./App.css";
 import Navbar from "./Navbar"; 
 import MyCryptos from "./MyCryptos";
 import CryptoConverter from "./CryptoConverter";
+import TaxCalculator from "./TaxCalculator";
 
 
 function App() {
@@ -12,7 +13,7 @@ function App() {
       <Navbar /> 
       <Routes>        <Route path="/" element={<MyCryptos />} />   
         <Route path="/CryptoConverter" element={<CryptoConverter/>}/>
-              
+        <Route path="/TaxCalculator" element={<TaxCalculator/>}/>
       </Routes>
     </Router>
   );

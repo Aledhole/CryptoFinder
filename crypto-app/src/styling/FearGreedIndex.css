@@ -1,13 +1,11 @@
 .gauge-container {
   position: fixed;
-  top: 120px; /* 🔹 Adjusted to be below the navbar */
+  top: 100px; 
   right: 50px;
-  text-align: center;
-  background-color: #1e1e1e;
+  text-align: center;  
   color: white;
   padding: 15px;
-  border-radius: 10px;
-  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+  border-radius: 10px;  
   width: 250px;
   z-index: 1000;
 }
@@ -19,24 +17,24 @@
   transition: color 0.3s ease-in-out;
 }
 
-/* ✅ Updated Color Gradient for Fear & Greed Index */
+
 .gauge-bar {
   width: 100%;
   height: 15px;
   border-radius: 10px;
   background: linear-gradient(
     to right,
-    #d9534f,   /* Extreme Fear - Red */
-    #f0ad4e,   /* Fear - Orange */
-    #ffd700,   /* Neutral - Yellow */
-    #90ee90,   /* Greed - Light Green */
-    #228B22    /* Extreme Greed - Dark Green */
+    #d9534f,   
+    #f0ad4e,   
+    #ffd700,   
+    #90ee90,   
+    #228B22    
   );
   position: relative;
   margin-top: 10px;
 }
 
-/* ✅ Moving Pointer (White Circle) */
+
 .gauge-pointer {
   width: 20px;
   height: 20px;

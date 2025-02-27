@@ -82,7 +82,7 @@ const TaxCalculator = () => {
         throw new Error(data.error || "Failed to process CSV.");
       }
 
-      setTransactions([...transactions, ...data.transactions]);
+      setTransactions((prev) => [...prev, ...data.transactions]);
       setFile(null);
     } catch (error) {
       setError(error.message);
@@ -91,36 +91,48 @@ const TaxCalculator = () => {
     setLoading(false);
   };
 
-  // Calculate Tax
   const calculateTax = async () => {
-    if (transactions.length === 0) {
+    const allTransactions = transactions.map((tx) => ({
+      symbol: tx.symbol.toUpperCase(),
+      buyDate: tx.buyDate,
+      buyPrice: parseFloat(tx.buyPrice), // ✅ Ensure it's a number
+      sellDate: tx.sellDate,
+      sellPrice: parseFloat(tx.sellPrice), // ✅ Ensure it's a number
+      amount: parseFloat(tx.amount), // ✅ Ensure it's a number
+    }));
+  
+    if (allTransactions.length === 0) {
       setError("No transactions to calculate. Please upload a CSV file or add transactions manually.");
       return;
     }
-
+  
+    console.log("Sending Tax Calculation");
+  
     setError(null);
     setLoading(true);
-
+  
     try {
       const response = await fetch("http://localhost:5000/calculate-tax", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ transactions }),
+        headers: { "Content-Type": "application/json" }, 
+        body: JSON.stringify({ transactions: allTransactions }), // ✅ Send corrected transactions
       });
-
+  
       const data = await response.json();
-
+  
       if (!response.ok) {
         throw new Error(data.error || "Failed to calculate tax.");
       }
-
+  
       setTaxResults(data);
     } catch (error) {
+      console.error("❌ Error calculating tax:", error.message);
       setError(error.message);
     }
-
+  
     setLoading(false);
   };
+  
 
   return (
     <div className="tax-page">

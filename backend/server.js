@@ -4,13 +4,16 @@ const cors = require("cors");
 const cryptoRoutes = require("./router");
 const app = express();
 const PORT = 5000;
-app.use(cors({credentials: true }))
-app.use("/", cryptoRoutes);
-
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+app.use(cors())
 
 require("dotenv").config();
 
-app.use(express.json());
+
+app.use("/", cryptoRoutes);
+
+
 
 
 app.listen(PORT, () => {

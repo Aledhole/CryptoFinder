@@ -9,8 +9,12 @@ const CryptoConverter = () => {
   const [converted, setConverted] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [searchFrom, setSearchFrom] = useState("");
+  const [searchTo, setSearchTo] = useState("");
+  const [showFromDropdown, setShowFromDropdown] = useState(false);
+  const [showToDropdown, setShowToDropdown] = useState(false);
 
-  // 🔹 Fetch top cryptos on page load
+  // Fetch top cryptos on page load
   useEffect(() => {
     const fetchCryptos = async () => {
       try {
@@ -31,9 +35,9 @@ const CryptoConverter = () => {
     };
 
     fetchCryptos();
-  }, []); // Runs only once when the component loads
+  }, []);
 
-  // 🔹 Fetch Conversion Rate
+  // Fetch Conversion Rate
   const convertCrypto = async () => {
     setLoading(true);
     setError(null);
@@ -70,34 +74,79 @@ const CryptoConverter = () => {
           min="0"
         />
       </div>
+      <p></p>
 
-      {/* 🔹 From Crypto Dropdown */}
-      <select value={from} onChange={(e) => setFrom(e.target.value)}>
-        {cryptos.length === 0 ? (
-          <option>Loading...</option>
-        ) : (
-          cryptos.map((crypto) => (
-            <option key={crypto.symbol} value={crypto.symbol}>
-              {crypto.symbol} - {crypto.name}
-            </option>
-          ))
+      {/* From Crypto Dropdown with Search */}
+      <div className="search-dropdown">
+        <input
+          type="text"
+          placeholder="Convert from .."
+          value={searchFrom}
+          onChange={(e) => {
+            setSearchFrom(e.target.value);
+            setShowFromDropdown(true);
+          }}
+          onFocus={() => setShowFromDropdown(true)}
+          onBlur={() => setTimeout(() => setShowFromDropdown(false), 200)}
+        />
+        {showFromDropdown && (
+          <div className="dropdown">
+            {cryptos
+              .filter((crypto) =>
+                crypto.name.toLowerCase().includes(searchFrom.toLowerCase())
+              )              
+              .map((crypto) => (
+                <p
+                  key={crypto.symbol}
+                  onClick={() => {
+                    setFrom(crypto.symbol);
+                    setSearchFrom("");
+                    setShowFromDropdown(false);
+                  }}
+                >
+                  {crypto.symbol} - {crypto.name}
+                </p>
+              ))}
+          </div>
         )}
-      </select>
+      </div>
 
-      <p>To</p>
+      <p></p>
 
-      {/* 🔹 To Crypto Dropdown */}
-      <select value={to} onChange={(e) => setTo(e.target.value)}>
-        {cryptos.length === 0 ? (
-          <option>Loading...</option>
-        ) : (
-          cryptos.map((crypto) => (
-            <option key={crypto.symbol} value={crypto.symbol}>
-              {crypto.symbol} - {crypto.name}
-            </option>
-          ))
+      {/* To Crypto Dropdown with Search */}
+      <div className="search-dropdown">
+        <input
+          type="text"
+          placeholder="Convert to .. "
+          value={searchTo}
+          onChange={(e) => {
+            setSearchTo(e.target.value);
+            setShowToDropdown(true);
+          }}
+          onFocus={() => setShowToDropdown(true)}
+          onBlur={() => setTimeout(() => setShowToDropdown(false), 200)}
+        />
+        {showToDropdown && (
+          <div className="dropdown">
+            {cryptos
+              .filter((crypto) =>
+                crypto.name.toLowerCase().includes(searchTo.toLowerCase())
+              )              
+              .map((crypto) => (
+                <p
+                  key={crypto.symbol}
+                  onClick={() => {
+                    setTo(crypto.symbol);
+                    setSearchTo("");
+                    setShowToDropdown(false);
+                  }}
+                >
+                  {crypto.symbol} - {crypto.name}
+                </p>
+              ))}
+          </div>
         )}
-      </select>
+      </div>
 
       <button onClick={convertCrypto} disabled={loading}>
         {loading ? "Converting..." : "Convert"}

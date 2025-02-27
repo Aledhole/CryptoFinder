@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import "./styling/FearGreedIndex.css"; // Import styles
+import "./styling/FearGreedIndex.css";
 
 const FearGreedIndex = () => {
   const [index, setIndex] = useState(null);
@@ -19,45 +19,76 @@ const FearGreedIndex = () => {
 
     fetchIndex();
   }, []);
+  
+  const getRotation = (value) => ((value / 100) * 180) - 90;
 
-  // 🔹 Define colors based on the classification
-  const getColor = (classification) => {
-    switch (classification) {
-      case "Extreme Fear":
-        return "#d9534f"; // Red
-      case "Fear":
-        return "#f0ad4e"; // Orange
-      case "Neutral":
-        return "#5bc0de"; // Blue
-      case "Greed":
-        return "#5cb85c"; // Green
-      case "Extreme Greed":
-        return "#4caf50"; // Dark Green
-      default:
-        return "#ccc"; // Default Grey
-    }
+  
+  const getTextColor = (value) => {
+    if (value < 20) return "#d9534f"; // Red
+    if (value < 40) return "#f0ad4e"; // Orange 
+    if (value < 60) return "#ffd700"; // yellow
+    if (value < 80) return "#5cb85c"; // Green 
+    return "#4caf50"; // Dark Green 
   };
 
   return (
-    <div className="fear-greed-container">
+    <div className="gauge-container">
       <h2>Crypto Fear & Greed Index</h2>
       
       {loading ? (
         <p>Loading...</p>
       ) : index ? (
-        <div className="fear-greed-card">
-          <div className="meter">
-            <div
-              className="meter-fill"
-              style={{
-                width: `${index.value}%`,
-                backgroundColor: getColor(index.classification),
-              }}
-            ></div>
-          </div>
-          <p className="index-value" style={{ color: getColor(index.classification) }}>
+        <div className="gauge-wrapper">
+          <svg className="gauge-svg" viewBox="0 0 200 120">
+            {/* Gradient for full-colored arc */}
+            <defs>
+              <linearGradient id="fearGreedGradient">
+                <stop offset="0%" stopColor="#d9534f" />  
+                <stop offset="25%" stopColor="#f0ad4e" /> 
+                <stop offset="50%" stopColor="#ffd700" />
+                <stop offset="75%" stopColor="#5cb85c" /> 
+                <stop offset="100%" stopColor="#4caf50" /> 
+              </linearGradient>
+            </defs>
+
+            {/* Background Arc (Grey) */}
+            <path
+              d="M 20 100 A 80 80 0 0 1 180 100"
+              stroke="#444"
+              strokeWidth="14"
+              fill="none"
+              strokeLinecap="round"
+            />
+
+            {/* Colored Arc with Gradient */}
+            <path
+              d="M 20 100 A 80 80 0 0 1 180 100"
+              stroke="url(#fearGreedGradient)"
+              strokeWidth="12"
+              fill="none"
+              strokeLinecap="round"
+            />
+
+            {/* Pointer */}
+            <line
+              x1="100"
+              y1="100"
+              x2="100"
+              y2="30"
+              stroke="white"
+              strokeWidth="6"
+              strokeLinecap="round"
+              transform={`rotate(${getRotation(index.value)} 100 100)`}
+            />
+            
+            {/* Pointer Circle for Smoothness */}
+            <circle cx="100" cy="100" r="5" fill="white" />
+          </svg>
+
+          {/* Classification Label (Changes Color Based on Pointer) */}
+          <div className="gauge-label" style={{ color: getTextColor(index.value) }}>
             {index.value} - {index.classification}
-          </p>
+          </div>
         </div>
       ) : (
         <p>Error loading data.</p>

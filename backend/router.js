@@ -37,11 +37,11 @@ router.post("/upload-csv", upload.single("file"), async (req, res) => {
 });
 
 router.post("/calculate-tax", async (req, res) => {
-  console.log("📡 Request Body Received:", req.body); // Debugging
+  //console.log(" Request Body Received:", JSON.stringify(req.body, null, 2));
 
-  // ✅ Ensure transactions exist and are an array
   if (!req.body || !req.body.transactions || !Array.isArray(req.body.transactions) || req.body.transactions.length === 0) {
-    return res.status(400).json({ error: "No transactions found. Please upload a valid CSV file." });
+    console.warn("No transactions received.");
+    return res.status(400).json({ error: "No transactions found. Please upload a CSV file or add transactions manually." });
   }
 
   const { transactions } = req.body;
@@ -50,6 +50,15 @@ router.post("/calculate-tax", async (req, res) => {
   let totalLosses = 0;
 
   transactions.forEach(({ buyPrice, sellPrice, amount }) => {
+    // Convert to numbers 
+    buyPrice = parseFloat(buyPrice);
+    sellPrice = parseFloat(sellPrice);
+    amount = parseFloat(amount);
+
+    if (isNaN(buyPrice) || isNaN(sellPrice) || isNaN(amount)) {
+      return res.status(400).json({ error: "Invalid transaction data. Prices and amounts must be numbers." });
+    }
+
     const profit = (sellPrice - buyPrice) * amount;
     if (profit > 0) totalGains += profit;
     else totalLosses += Math.abs(profit);
@@ -63,9 +72,10 @@ router.post("/calculate-tax", async (req, res) => {
 });
 
 
+
 router.get("/top-cryptos", async (req, res) => {
   try {
-    const topCryptos = await fetchTopCryptos(); // Ensure this function fetches top cryptos
+    const topCryptos = await fetchTopCryptos(); 
 
     if (!topCryptos || topCryptos.length === 0) {
       return res.status(500).json({ error: "Failed to fetch top cryptocurrencies." });
@@ -95,7 +105,7 @@ router.get("/convert", async (req, res) => {
     const toSymbol = to.toUpperCase();
 
     if (!fromPriceData?.data?.[fromSymbol] || !toPriceData?.data?.[toSymbol]) {
-      console.error(`❌ Failed to fetch price data for ${fromSymbol} or ${toSymbol}`);
+      console.error(`Failed to fetch price data for ${fromSymbol} or ${toSymbol}`);
       return res.status(500).json({ error: `Price data not found for ${fromSymbol} or ${toSymbol}` });
     }
 
@@ -104,14 +114,14 @@ router.get("/convert", async (req, res) => {
     const toPrice = toPriceData.data[toSymbol]?.quote?.USD?.price;
 
     if (fromPrice === undefined || toPrice === undefined) {
-      console.error(`❌ Price data missing for ${fromSymbol} or ${toSymbol}`);
+      console.error(`Price data missing for ${fromSymbol} or ${toSymbol}`);
       return res.status(500).json({ error: `Price data not found for ${fromSymbol} or ${toSymbol}` });
     }    
     const convertedAmount = (amount * fromPrice) / toPrice;
 
     res.json({ converted: convertedAmount });
   } catch (error) {
-    console.error("❌ Error converting crypto:", error);
+    console.error("Error converting crypto:", error);
     res.status(500).json({ error: "Conversion failed" });
   }
 });
@@ -119,7 +129,7 @@ router.get("/convert", async (req, res) => {
 
   
 
-// ✅ Route to Get Fear & Greed Index
+// Route to Get Fear & Greed Index
 router.get("/fear-greed-index", async (req, res) => {
   const indexData = await fetchFearGreedIndex();
 

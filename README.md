@@ -15,7 +15,9 @@ Installation
 Start
 
 backend: npm run dev
+
 crypto-app: npm start
+
 
 Tech Stack
 

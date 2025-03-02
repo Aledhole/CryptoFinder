@@ -12,6 +12,10 @@ Installation
 1. Install Dependencies using npm install
 2. Create a coinmarketcap api key via coinmarketcap.com, save it as CMC_SECRET_key= in .env file
 
+Start
+
+backend: npm run dev
+crypto-app: npm start
 
 Tech Stack
 

@@ -27,11 +27,11 @@ router.post("/upload-csv", upload.single("file"), async (req, res) => {
       }
     })
     .on("end", () => {
-      fs.unlinkSync(req.file.path); // Delete file after processing
+      fs.unlinkSync(req.file.path); 
       res.json({ transactions });
     })
     .on("error", (error) => {
-      console.error("❌ Error processing CSV:", error.message);
+      console.error("Error processing CSV:", error.message);
       res.status(500).json({ error: "Failed to process CSV file" });
     });
 });
@@ -171,5 +171,49 @@ router.get("/check-crypto", async (req, res) => {
 
   return res.status(404).json({ error: "Cryptocurrency not found" });
 });
+
+
+///////////////////////////
+router.get("/charts", async (req, res) => {
+  const symbol = (req.query.symbol || "BTC").toUpperCase();
+  const interval = req.query.interval || "daily"; // let user control this
+  const apiKey = process.env.CMC_API_KEY;
+  
+  const timeStart = new Date("2013-04-28T00:00:00Z");
+  const timeEnd = new Date();
+
+  try {
+    const response = await axios.get(
+      "https://pro-api.coinmarketcap.com/v1/cryptocurrency/quotes/historical",
+      {
+        headers: {
+          "X-CMC_PRO_API_KEY": apiKey,
+        },
+        params: {
+          symbol,
+          time_start: timeStart.toISOString(),
+          time_end: timeEnd.toISOString(),
+          interval, // controlled via dropdown/button
+        },
+      }
+    );
+
+    const chartData = response.data.data.quotes.map((point) => ({
+      time: new Date(point.timestamp).toLocaleDateString("en-GB", {
+        day: "2-digit",
+        month: "short",
+        year: "numeric",
+      }),
+      price: parseFloat(point.quote.USD.price.toFixed(2)),
+    }));
+
+    res.json(chartData);
+  } catch (err) {
+    console.error("CMC chart fetch error:", err.message);
+    res.status(500).json({ error: "Failed to fetch chart data" });
+  }
+});
+
+
 
 module.exports = router;

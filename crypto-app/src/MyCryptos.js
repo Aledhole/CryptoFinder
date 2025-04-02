@@ -1,12 +1,12 @@
 import React, { useState} from "react";
 import "./App.css";
-import FearGreedIndex from "./FearGreedIndex";
 
 const MyCryptos = () => {
   const [cryptos, setCryptos] = useState([]);
   const [newSymbol, setNewSymbol] = useState("");
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
+  
 
   //  Validate Cryptocurrency
   const validateCrypto = async (symbol) => {
@@ -69,12 +69,9 @@ const MyCryptos = () => {
 
   return (
     <div className="crypto-container">
-      <h2>Live Crypto Prices</h2>
-  
-      {/* ✅ Fear & Greed Index Section */}
-      <FearGreedIndex />
-  
-      {/* ✅ Improved Add Crypto Section */}
+      <h2>Live Crypto Prices</h2>  
+        
+      
       <div className="add-crypto-container">
         <h2>Add a New Crypto</h2>
         <input
@@ -90,7 +87,7 @@ const MyCryptos = () => {
   
       {error && <p className="error">{error}</p>}
   
-      {/* ✅ Crypto Display */}
+      {/* Crypto Display */}
       <div className="crypto-gallery">
         {cryptos.map((crypto, index) => (
           <div key={index} className="crypto-item">

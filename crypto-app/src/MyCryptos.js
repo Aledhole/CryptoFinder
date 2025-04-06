@@ -9,8 +9,7 @@ const MyCryptos = () => {
   const [cryptos, setCryptos] = useState([]);
   const [newSymbol, setNewSymbol] = useState("");
   const [error, setError] = useState(null);
-  const [loading, setLoading] = useState(false);
-  
+  const [loading, setLoading] = useState(false);  
 
   
   const validateCrypto = async (symbol) => {
@@ -75,7 +74,7 @@ const MyCryptos = () => {
     <div className="crypto-container">
       <h2>Live Crypto Prices</h2> 
 
-      <FearGreedIndex/>       
+      <FearGreedIndex/>      
       
       <div className="add-crypto-container">
         <h2>Add a New Crypto</h2>
@@ -104,6 +103,7 @@ const MyCryptos = () => {
       </div>
       <CryptoChart/>
     </div>
+    
   );
 };
 

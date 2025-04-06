@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import "./styling/CryptoChart.css"
 import {
   LineChart,
   Line,
@@ -42,33 +43,35 @@ const CryptoChart = ({ symbol = "BTC" }) => {
   }, [symbol, interval]);
 
   return (
-    <div>
-      <h3>{symbol} Price Chart</h3> 
-      {loading ? (
-        <p>Loading chart...</p>
-      ) : (
-        <ResponsiveContainer width="100%" height={300}>
-          <LineChart data={chartData} margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
-            <XAxis dataKey="time" />
-            <YAxis domain={["auto", "auto"]} />
-            <Tooltip />
-            <CartesianGrid stroke="#ccc" strokeDasharray="5 5" />
-            <Line type="monotone" dataKey="price" stroke="#ff9800" dot={false} />
-          </LineChart>
-        </ResponsiveContainer>
-      )}
-      <div className="interval-buttons">
-        {intervals.map((option) => (
-          <button
-            key={option.value}
-            onClick={() => setInterval(option.value)}
-            className={interval === option.value ? "active" : ""}
-          >
-            {option.label}
-          </button>
-        ))}
-      </div>
-    </div>
+    <div className="crypto-chart-wrapper">
+    <div className="crypto-chart-container">
+  <h3>{symbol} Price Chart</h3>
+  {loading ? (
+    <p>Loading chart...</p>
+  ) : (
+    <ResponsiveContainer width="100%" height={300}>
+      <LineChart data={chartData} margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
+        <XAxis dataKey="time" />
+        <YAxis domain={["auto", "auto"]} />
+        <Tooltip />
+        <CartesianGrid stroke="#ccc" strokeDasharray="5 5" />
+        <Line type="monotone" dataKey="price" stroke="#ff9800" dot={false} />
+      </LineChart>
+    </ResponsiveContainer>
+  )}
+  <div className="interval-buttons">
+    {intervals.map((option) => (
+      <button
+        key={option.value}
+        onClick={() => setInterval(option.value)}
+        className={interval === option.value ? "active" : ""}
+      >
+        {option.label}
+      </button>
+    ))}
+  </div>
+</div>
+</div>
   );
 };
 

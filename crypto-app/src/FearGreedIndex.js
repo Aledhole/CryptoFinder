@@ -40,7 +40,7 @@ const FearGreedIndex = () => {
       ) : index ? (
         <div className="gauge-wrapper">
           <svg className="gauge-svg" viewBox="0 0 200 120">
-            {/* Gradient for full-colored arc */}
+                        
             <defs>
               <linearGradient id="fearGreedGradient">
                 <stop offset="0%" stopColor="#d9534f" />  
@@ -50,8 +50,7 @@ const FearGreedIndex = () => {
                 <stop offset="100%" stopColor="#4caf50" /> 
               </linearGradient>
             </defs>
-
-            {/* Background Arc (Grey) */}
+           
             <path
               d="M 20 100 A 80 80 0 0 1 180 100"
               stroke="#444"
@@ -59,8 +58,7 @@ const FearGreedIndex = () => {
               fill="none"
               strokeLinecap="round"
             />
-
-            {/* Colored Arc with Gradient */}
+            
             <path
               d="M 20 100 A 80 80 0 0 1 180 100"
               stroke="url(#fearGreedGradient)"
@@ -68,8 +66,7 @@ const FearGreedIndex = () => {
               fill="none"
               strokeLinecap="round"
             />
-
-            {/* Pointer */}
+            
             <line
               x1="100"
               y1="100"
@@ -79,13 +76,11 @@ const FearGreedIndex = () => {
               strokeWidth="6"
               strokeLinecap="round"
               transform={`rotate(${getRotation(index.value)} 100 100)`}
-            />
+            />            
             
-            {/* Pointer Circle for Smoothness */}
             <circle cx="100" cy="100" r="5" fill="white" />
           </svg>
-
-          {/* Classification Label (Changes Color Based on Pointer) */}
+          
           <div className="gauge-label" style={{ color: getTextColor(index.value) }}>
             {index.value} - {index.classification}
           </div>

@@ -1,5 +1,9 @@
 import React, { useState} from "react";
 import "./App.css";
+import CryptoChart from "./CryptoChart";
+import FearGreedIndex from "./FearGreedIndex";
+
+// Main Page
 
 const MyCryptos = () => {
   const [cryptos, setCryptos] = useState([]);
@@ -8,7 +12,7 @@ const MyCryptos = () => {
   const [loading, setLoading] = useState(false);
   
 
-  //  Validate Cryptocurrency
+  
   const validateCrypto = async (symbol) => {
     try {
       const response = await fetch(`http://localhost:5000/crypto-info?symbol=${symbol}`);
@@ -69,8 +73,9 @@ const MyCryptos = () => {
 
   return (
     <div className="crypto-container">
-      <h2>Live Crypto Prices</h2>  
-        
+      <h2>Live Crypto Prices</h2> 
+
+      <FearGreedIndex/>       
       
       <div className="add-crypto-container">
         <h2>Add a New Crypto</h2>
@@ -97,6 +102,7 @@ const MyCryptos = () => {
           </div>
         ))}
       </div>
+      <CryptoChart/>
     </div>
   );
 };

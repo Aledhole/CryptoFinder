@@ -124,5 +124,55 @@ const fetchTopCryptos = async () => {
   }
 };
 
+const fetchCryptoCharts = async (res, symbol, interval) => {
+  const symbolMap = {
+    BTC: "bitcoin",
+    ETH: "ethereum",
+    SOL: "solana",
+    // Add more as needed
+  };
 
-module.exports = {fetchTopCryptos,fetchFearGreedIndex, fetchCryptoInfo, fetchCryptoPrice,fetchFullCryptoData, validateCryptoSymbol};
+  const id = symbolMap[symbol.toUpperCase()] || "bitcoin";
+  const vs_currency = "usd";
+
+  // Map your frontend interval to number of days
+  const intervalToDays = {
+    "15m": "2",  
+    "1h": "3",
+    "4h": "7",
+    "1d": "30",
+    "7d": "90",
+  };
+
+  const days = intervalToDays[interval] || "30";
+
+  try {
+    const response = await axios.get(
+      `https://api.coingecko.com/api/v3/coins/${id}/market_chart`,
+      {
+        params: {
+          vs_currency,
+          days,          
+        },
+      }
+    );
+
+    const prices = response.data.prices.map(([timestamp, price]) => ({
+      time: new Date(timestamp).toLocaleString("en-GB", {
+        day: "2-digit",
+        month: "short",
+        year: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
+      }),
+      price: parseFloat(price.toFixed(2)),
+    }));
+
+    res.json(prices);
+  } catch (err) {
+    console.error("CoinGecko chart fetch error:", err.response?.data || err.message);
+    res.status(500).json({ error: "Failed to fetch chart data" });
+  }
+};
+
+module.exports = {fetchTopCryptos,fetchFearGreedIndex, fetchCryptoInfo, fetchCryptoPrice,fetchFullCryptoData, validateCryptoSymbol, fetchCryptoCharts};

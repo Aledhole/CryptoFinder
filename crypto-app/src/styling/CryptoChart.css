@@ -37,3 +37,13 @@
   color: #000;
   font-weight: bold;
 }
+.chart-scroll-wrapper {
+  overflow-x: auto;
+  width: 100%;
+}
+
+.chart-inner {
+  min-width: 900px;
+  display: inline-block;
+  text-align: left;
+}

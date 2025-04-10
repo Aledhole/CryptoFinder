@@ -1,0 +1,41 @@
+.crypto-chart-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 2rem 0;
+}
+
+.crypto-chart-container {
+  width: 90%;
+                 
+  max-width: 1000px;   
+  padding: 1rem;
+  border-radius: 10px;
+  color: white;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+.crypto-chart-container .interval-buttons button {
+  all: unset;                     /* Reset ALL inherited/global styles */
+  background-color: #2a2a2a;
+  color: white;
+  border: 1px solid #444;
+  border-radius: 6px;
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  white-space: nowrap;
+  min-width: 60px;
+  text-align: center;
+}
+
+.crypto-chart-container .interval-buttons button:hover {
+  background-color: #444;
+}
+
+.crypto-chart-container .interval-buttons button.active {
+  background-color: #ff9800;
+  color: #000;
+  font-weight: bold;
+}
+
+

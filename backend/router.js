@@ -3,7 +3,7 @@ const axios = require("axios");
 const multer = require("multer");
 const csvParser = require("csv-parser");
 const fs = require("fs");
-const {fetchTopCryptos, fetchFearGreedIndex, fetchCryptoInfo, fetchCryptoPrice,fetchFullCryptoData, validateCryptoSymbol } = require("./controller");
+const {fetchTopCryptos, fetchFearGreedIndex, fetchCryptoInfo, fetchCryptoPrice,fetchFullCryptoData, validateCryptoSymbol,fetchCryptoCharts } = require("./controller");
 
 const router = express.Router();
 
@@ -27,11 +27,11 @@ router.post("/upload-csv", upload.single("file"), async (req, res) => {
       }
     })
     .on("end", () => {
-      fs.unlinkSync(req.file.path); // Delete file after processing
+      fs.unlinkSync(req.file.path); 
       res.json({ transactions });
     })
     .on("error", (error) => {
-      console.error("❌ Error processing CSV:", error.message);
+      console.error("Error processing CSV:", error.message);
       res.status(500).json({ error: "Failed to process CSV file" });
     });
 });
@@ -171,5 +171,21 @@ router.get("/check-crypto", async (req, res) => {
 
   return res.status(404).json({ error: "Cryptocurrency not found" });
 });
+
+
+// ///////////////////////////
+router.get("/charts", async (req, res) => {
+  const symbol = (req.query.symbol || "BTC").toUpperCase();
+  const interval = req.query.interval || "1d";
+  const allowed = ["15m", "1h", "4h", "1d", "7d"];
+
+  if (!allowed.includes(interval)) {
+    return res.status(400).json({ error: "Invalid interval" });
+  }
+
+  await fetchCryptoCharts(res, symbol, interval);
+});
+
+
 
 module.exports = router;

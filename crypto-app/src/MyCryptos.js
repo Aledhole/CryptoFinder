@@ -1,14 +1,17 @@
 import React, { useState} from "react";
 import "./App.css";
+import CryptoChart from "./CryptoChart";
 import FearGreedIndex from "./FearGreedIndex";
+
+// Main Page
 
 const MyCryptos = () => {
   const [cryptos, setCryptos] = useState([]);
   const [newSymbol, setNewSymbol] = useState("");
   const [error, setError] = useState(null);
-  const [loading, setLoading] = useState(false);
-
-  //  Validate Cryptocurrency
+  const [loading, setLoading] = useState(false);  
+  const [selectedSymbol, setSelectedSymbol] = useState("BTC");
+  
   const validateCrypto = async (symbol) => {
     try {
       const response = await fetch(`http://localhost:5000/crypto-info?symbol=${symbol}`);
@@ -68,13 +71,14 @@ const MyCryptos = () => {
   };
 
   return (
+    
     <div className="crypto-container">
-      <h2>Live Crypto Prices</h2>
+    <h1>Live Crypto Prices</h1>
+    <FearGreedIndex/>
   
-      {/* ✅ Fear & Greed Index Section */}
-      <FearGreedIndex />
-  
-      {/* ✅ Improved Add Crypto Section */}
+    {cryptos.length === 0 ? (
+  <div className="centered-form-wrapper">
+    <div className="centered-form-content">
       <div className="add-crypto-container">
         <h2>Add a New Crypto</h2>
         <input
@@ -87,21 +91,59 @@ const MyCryptos = () => {
           {loading ? "Adding..." : "Add Crypto"}
         </button>
       </div>
-  
-      {error && <p className="error">{error}</p>}
-  
-      {/* ✅ Crypto Display */}
-      <div className="crypto-gallery">
-        {cryptos.map((crypto, index) => (
-          <div key={index} className="crypto-item">
-            <img src={crypto.logo} alt={crypto.symbol} className="crypto-image" />
-            <h3>{crypto.symbol}</h3>
-            <p className="crypto-price">${crypto.price}</p>
-          </div>
-        ))}
-      </div>
+      <CryptoChart symbol={selectedSymbol} />
     </div>
-  );
-};
+  </div>
+  
+) : (
+      <div className="crypto-main-layout">
+        <div className="crypto-gallery">
+          {cryptos.map((crypto, index) => (
+            <div
+              key={index}
+              className="crypto-item"
+              onClick={() => setSelectedSymbol(crypto.symbol)}
+              style={{
+                cursor: "pointer",
+                border:
+                  selectedSymbol === crypto.symbol
+                    ? "2px solid #00f"
+                    : "none",
+              }}
+            >
+              <img
+                src={crypto.logo}
+                alt={crypto.symbol}
+                className="crypto-image"
+              />
+              <h3>{crypto.symbol}</h3>
+              <p className="crypto-price">${crypto.price}</p>
+            </div>
+          ))}
+        </div>
+  
+        <div className="crypto-content">
+          <div className="add-crypto-container">
+            <h2>Add a New Crypto</h2>
+            <input
+              type="text"
+              value={newSymbol}
+              onChange={(e) => setNewSymbol(e.target.value)}
+              placeholder="Enter Symbol (e.g., BTC)"
+            />
+            <button className="button" onClick={handleAddCrypto} disabled={loading}>
+              {loading ? "Adding..." : "Add Crypto"}
+            </button>
+          </div>
+  
+          <CryptoChart symbol={selectedSymbol} />
+        </div>
+      </div>
+    )}
+  </div>
+  )
+}
+  
+
 
 export default MyCryptos;

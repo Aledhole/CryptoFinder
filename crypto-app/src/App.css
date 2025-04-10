@@ -38,6 +38,24 @@ body {
   gap: 15px;
   margin-top: 20px;
 }
+.crypto-main-layout {
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-start; 
+  width: 100%;                 
+  max-width: 1400px;           
+  padding: 0 40px;
+  margin: 0 auto;              
+  gap: 40px;
+}
+
+.crypto-gallery {
+  width: 220px;
+  gap: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
 
 .crypto-image {
   width: 100px; 
@@ -53,7 +71,10 @@ body {
 }
 
 .crypto-container {
-  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
   padding: 20px;
 }
 
@@ -121,14 +142,6 @@ button:active {
   text-shadow: 1px 1px 2px rgba(255, 0, 0, 0.5);
 }
 
-.crypto-gallery {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 20px;
-  padding: 20px;
-}
-
 .crypto-item {
   text-align: center;
   background: #2a2a2a;
@@ -148,6 +161,7 @@ button:active {
 .crypto-item:hover {
   transform: translateY(-5px);
   box-shadow: 0px 8px 15px rgba(255, 255, 255, 0.2);
+
 }
 
 .crypto-price {
@@ -167,3 +181,5 @@ button:active {
     max-width: 300px;
   }
 }
+
+

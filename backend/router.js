@@ -173,17 +173,17 @@ router.get("/check-crypto", async (req, res) => {
 });
 
 
-///////////////////////////
+// ///////////////////////////
 router.get("/charts", async (req, res) => {
   const symbol = (req.query.symbol || "BTC").toUpperCase();
-  const interval = req.query.interval || "1d";  
-  // Supported intervals 
-  const allowedIntervals = ["15m", "1h", "4h", "1d", "7d"];
+  const interval = req.query.interval || "1d";
+  const allowed = ["15m", "1h", "4h", "1d", "7d"];
 
-  if (!allowedIntervals.includes(interval)) {
+  if (!allowed.includes(interval)) {
     return res.status(400).json({ error: "Invalid interval" });
   }
-  await fetchCryptoCharts(res, symbol, interval);  
+
+  await fetchCryptoCharts(res, symbol, interval);
 });
 
 

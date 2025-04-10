@@ -48,7 +48,7 @@ const fetchCryptoPrice = async (symbol) => {
   const fullData = await fetchFullCryptoData(symbol);
 
   if (!fullData || !fullData.data || !fullData.data[symbol.toUpperCase()]) {
-    console.error(`❌ API response invalid for ${symbol}`, JSON.stringify(fullData, null, 2));
+    console.error(`API response invalid for ${symbol}`, JSON.stringify(fullData, null, 2));
     return null;
   }
 
@@ -64,7 +64,6 @@ const fetchCryptoInfo = async (symbol) => {
 };
 
 
-// Validate if a cryptocurrency exists (Cached for 6 hours)
 const validateCryptoSymbol = async (symbol) => {
   if (cache["cryptoSymbols"] && Date.now() - cache["cryptoSymbols"].timestamp < 6 * 60 * 60 * 1000) {
     return cache["cryptoSymbols"].data.includes(symbol.toUpperCase());
@@ -124,34 +123,38 @@ const fetchTopCryptos = async () => {
   }
 };
 
+
+
 const fetchCryptoCharts = async (res, symbol, interval) => {
   const symbolMap = {
     BTC: "bitcoin",
     ETH: "ethereum",
-    SOL: "solana",
+    SOL: "solana",    
   };
 
   const id = symbolMap[symbol.toUpperCase()] || "bitcoin";
   const vs_currency = "usd";
 
+  // Interval duration 
   const intervalMap = {
     "15m": 15 * 60 * 1000,
     "1h": 60 * 60 * 1000,
     "4h": 4 * 60 * 60 * 1000,
     "1d": 24 * 60 * 60 * 1000,
-    "7d": 7 * 24 * 60 * 60 * 1000,
+    "7d": 7 * 24 * 60 * 1000,
   };
 
-  const daysForInterval = {
-    "15m": "1",    // 5-min 
-    "1h": "1",     // 5-min 
-    "4h": "7",     // 30-min 
-    "1d": "30",    // 4h 
-    "7d": "365",   // daily 
+  
+  const intervalToDays = {
+    "15m": "1",    
+    "1h": "1",     
+    "4h": "7",    
+    "1d": "90",    
+    "7d": "365",   
   };
 
   const intervalMs = intervalMap[interval] || intervalMap["1d"];
-  const days = daysForInterval[interval] || "30";
+  const days = intervalToDays[interval] || "30";
 
   try {
     const response = await axios.get(
@@ -165,63 +168,54 @@ const fetchCryptoCharts = async (res, symbol, interval) => {
     );
 
     const prices = response.data.prices; // [timestamp, price]
-    const candles = [];
-    let bucketStart = null;
-    let bucketPrices = [];
-
-    for (const [timestamp, price] of prices) {
-      const currentBucket = Math.floor(timestamp / intervalMs) * intervalMs;
-
-      if (bucketStart === null) {
-        bucketStart = currentBucket;
-      }
-
-      if (currentBucket !== bucketStart) {
-        if (bucketPrices.length) {
-          const open = bucketPrices[0][1];
-          const close = bucketPrices.at(-1)[1];
-          const high = Math.max(...bucketPrices.map((p) => p[1]));
-          const low = Math.min(...bucketPrices.map((p) => p[1]));
-
-          candles.push({
-            date: new Date(bucketStart),
-            open,
-            high,
-            low,
-            close,
-          });
-        }
-
-        bucketStart = currentBucket;
-        bucketPrices = [];
-      }
-
-      bucketPrices.push([timestamp, price]);
-    }
+    const generateCandles = (prices, intervalMs) => {
+      const candles = [];
+      let bucketStart = null;
+      let bucketPrices = [];
     
-    // Add last candle
-    if (bucketPrices.length) {
-      const open = bucketPrices[0][1];
-      const close = bucketPrices.at(-1)[1];
-      const high = Math.max(...bucketPrices.map((p) => p[1]));
-      const low = Math.min(...bucketPrices.map((p) => p[1]));
-
       const round = (n) => Math.round(n * 100) / 100;
-      candles.push({
-        date: new Date(bucketStart),
-        open: round(open),
-        high: round(high),
-        low: round(low),
-        close: round(close),
-      });
-    }
+    
+      for (const [timestamp, price] of prices) {
+        const currentBucket = Math.floor(timestamp / intervalMs) * intervalMs;
+    
+        if (bucketStart === null) bucketStart = currentBucket;
+    
+        if (currentBucket !== bucketStart) {
+          if (bucketPrices.length > 0) {
+            const open = bucketPrices[0][1];
+            const close = bucketPrices.at(-1)[1];
+            const high = Math.max(...bucketPrices.map(p => p[1]));
+            const low = Math.min(...bucketPrices.map(p => p[1]));
+    
+            candles.push({ date: new Date(bucketStart), open: round(open), high: round(high), low: round(low), close: round(close) });
+          }
+          bucketStart = currentBucket;
+          bucketPrices = [];
+        }
+    
+        bucketPrices.push([timestamp, price]);
+      }
+    
+      if (bucketPrices.length > 0) {
+        const open = bucketPrices[0][1];
+        const close = bucketPrices.at(-1)[1];
+        const high = Math.max(...bucketPrices.map(p => p[1]));
+        const low = Math.min(...bucketPrices.map(p => p[1]));
+        candles.push({ date: new Date(bucketStart), open: round(open), high: round(high), low: round(low), close: round(close) });
+      }
+    
+      return candles;
+    };
 
-    res.json(candles);
+    //console.log(`Generated ${candles.length} candles for ${interval}`);
+    res.json(generateCandles(prices,intervalMs));
   } catch (err) {
-    console.error("CoinGecko candle generation error:", err.response?.data || err.message);
+    console.error("Candle generation error:", err.response?.data || err.message);
     res.status(500).json({ error: "Failed to fetch or process chart data" });
   }
 };
+
+
 
 
 module.exports = {fetchTopCryptos,fetchFearGreedIndex, fetchCryptoInfo, fetchCryptoPrice,fetchFullCryptoData, validateCryptoSymbol, fetchCryptoCharts};

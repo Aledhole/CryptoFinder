@@ -49,7 +49,7 @@ const CryptoChart = ({ symbol = "BTC" }) => {
     fetchChartData();
   }, [symbol, interval]);
 
-  
+  // Define how many candles to show based on interval
   const intervalToCandles = {
     "15m": 96,   // ~1 day
     "1h": 168,   // ~1 week
@@ -57,11 +57,8 @@ const CryptoChart = ({ symbol = "BTC" }) => {
     "1d": 90,    // ~3 months
     "7d": 52,    // ~1 year
   };
-  const candleCount = intervalToCandles[interval] || 100;  
-  console.log("Total candles:", chartData.length);
-  console.log("Candle count used:", candleCount);
 
-  
+  const candleCount = intervalToCandles[interval] || 100;
 
   const xExtents =
     chartData.length >= candleCount
